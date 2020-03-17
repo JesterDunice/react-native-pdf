@@ -73,6 +73,8 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     private boolean autoSpacing = false;
     private boolean pageFling = false;
     private boolean pageSnap = false;
+    private boolean nightMode = false;
+    private boolean fitEachPage = false;
     private FitPolicy fitPolicy = FitPolicy.WIDTH;
 
     private static PdfView instance = null;
@@ -85,6 +87,16 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         super(context,set);
         this.context = context;
         this.instance = this;
+    }
+
+    /* hacky workaround, jump to centre of page */
+    @Override
+    public void jumpTo(int page, boolean withAnimation) {
+        super.jumpTo(page, withAnimation);
+
+        // fix centering on the left side
+        float pn = (float)getCurrentPage() / (float)(getPageCount() - 1);
+        this.setPositionOffset(pn, true);
     }
 
     @Override
@@ -157,11 +169,11 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     public boolean onTap(MotionEvent e){
 
         // maybe change by other instance, restore zoom setting
-        //Constants.Pinch.MINIMUM_ZOOM = this.minScale;
-        //Constants.Pinch.MAXIMUM_ZOOM = this.maxScale;
+        Constants.Pinch.MINIMUM_ZOOM = this.minScale;
+        Constants.Pinch.MAXIMUM_ZOOM = this.maxScale;
 
         WritableMap event = Arguments.createMap();
-        event.putString("message", "pageSingleTap|"+page+"|"+e.getX()+"|"+e.getY());
+        event.putString("message", "pageSingleTap|"+page);
 
         ReactContext reactContext = (ReactContext)this.getContext();
         reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
@@ -203,8 +215,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (this.isRecycled())
-            this.drawPdf();
+        if (this.isRecycled()) this.drawPdf();
     }
 
     public void drawPdf() {
@@ -215,12 +226,12 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
             // set scale
             this.setMinZoom(this.minScale);
             this.setMaxZoom(this.maxScale);
-            this.setMidZoom((this.maxScale+this.minScale)/2);
+            this.setMidZoom((this.maxScale + this.minScale) / 2);
             Constants.Pinch.MINIMUM_ZOOM = this.minScale;
             Constants.Pinch.MAXIMUM_ZOOM = this.maxScale;
 
             this.fromUri(getURI(this.path))
-                .defaultPage(this.page-1)
+                .defaultPage(this.page - 1)
                 .swipeHorizontal(this.horizontal)
                 .onPageChange(this)
                 .onLoad(this)
@@ -235,6 +246,8 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
                 .pageSnap(this.pageSnap)
                 .autoSpacing(this.autoSpacing)
                 .pageFling(this.pageFling)
+                .nightMode(this.nightMode)
+                .fitEachPage(this.fitEachPage)
                 .enableAnnotationRendering(this.enableAnnotationRendering)
                 .linkHandler(this)
                 .load();
@@ -248,7 +261,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
     // page start from 1
     public void setPage(int page) {
-        this.page = page>1?page:1;
+        this.page = page > 1 ? page : 1;
     }
 
     public void setScale(float scale) {
@@ -265,6 +278,10 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
     public void setHorizontal(boolean horizontal) {
         this.horizontal = horizontal;
+    }
+
+    public void setFitEachPage(boolean fitEachPage) {
+        this.fitEachPage = fitEachPage;
     }
 
     public void setSpacing(int spacing) {
@@ -294,6 +311,10 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
             this.pageFling = false;
             this.pageSnap = false;
         }
+    }
+
+    public void updateNightMode(boolean nightMode) {
+      this.nightMode = nightMode;
     }
 
     public void setFitPolicy(int fitPolicy) {
@@ -346,7 +367,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
      * @see https://github.com/barteksc/AndroidPdfViewer/blob/master/android-pdf-viewer/src/main/java/com/github/barteksc/pdfviewer/link/DefaultLinkHandler.java
      */
     private void handlePage(int page) {
-        this.jumpTo(page);
+        this.jumpTo(page, false);
     }
 
     private void showLog(final String str) {

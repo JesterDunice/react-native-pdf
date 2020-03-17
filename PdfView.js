@@ -39,6 +39,8 @@ export default class PdfView extends Component {
         currentPage: PropTypes.number,
         onPageSingleTap: PropTypes.func,
         onScaleChanged: PropTypes.func,
+        fitEachPage: PropTypes.bool,
+        nightMode: PropTypes.bool,
     };
 
     static defaultProps = {
@@ -59,6 +61,8 @@ export default class PdfView extends Component {
         },
         onScaleChanged: (scale) => {
         },
+        fitEachPage: false,
+        nightMode: false,
     };
 
     constructor(props) {
@@ -153,7 +157,7 @@ export default class PdfView extends Component {
 
     }
 
-    _keyExtractor = (item, index) => "pdf-page-" + index;
+    _keyExtractor = (_, index) => "pdf-page-" + index;
 
     _getPageWidth = () => {
 

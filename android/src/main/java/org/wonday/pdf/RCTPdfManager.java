@@ -120,6 +120,16 @@ public class RCTPdfManager extends SimpleViewManager<PdfView> {
         pdfView.setFitPolicy(fitPolicy);
     }
 
+    @ReactProp(name = "nightMode")
+    public void setNightMode(PdfView pdfView, boolean nightMode) {
+        pdfView.updateNightMode(nightMode);
+    }
+
+    @ReactProp(name = "fitEachPage")
+    public void setFitEachPage(PdfView pdfView, boolean fitEachPage) {
+        pdfView.setFitEachPage(fitEachPage);
+    }
+
     @Override
     public void onAfterUpdateTransaction(PdfView pdfView) {
         super.onAfterUpdateTransaction(pdfView);
