@@ -74,7 +74,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     private boolean pageFling = false;
     private boolean pageSnap = false;
     private boolean nightMode = false;
-    private boolean fitEachPage = false;
+    private boolean fitEachPage = false; // not used after rollback android to 3.1.0-beta-1
     private FitPolicy fitPolicy = FitPolicy.WIDTH;
 
     private static PdfView instance = null;
@@ -247,7 +247,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
                 .autoSpacing(this.autoSpacing)
                 .pageFling(this.pageFling)
                 .nightMode(this.nightMode)
-                .fitEachPage(this.fitEachPage)
+                // .fitEachPage(this.fitEachPage) not used after rollback android to 3.1.0-beta-1
                 .enableAnnotationRendering(this.enableAnnotationRendering)
                 .linkHandler(this)
                 .load();
