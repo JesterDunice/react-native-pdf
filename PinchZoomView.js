@@ -35,7 +35,7 @@ export default class PinchZoomView extends Component {
         super(props);
         this.state = {};
         this.distant = 0;
-
+        this.gestureHandlers = {};
     }
 
     componentDidMount() {
