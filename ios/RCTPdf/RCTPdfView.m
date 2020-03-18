@@ -69,6 +69,7 @@ const float MIN_SCALE = 1.0f;
         _pdfView.autoScales = YES;
         _pdfView.displaysPageBreaks = YES;
         _pdfView.displayBox = kPDFDisplayBoxCropBox;
+        _pdfView.backgroundColor = [UIColor clearColor];
         
         _fixScaleFactor = -1.0f;
         _initialed = NO;
@@ -240,6 +241,8 @@ const float MIN_SCALE = 1.0f;
         if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"enablePaging"])) {
             if (_enablePaging) {
                 [_pdfView usePageViewController:YES withViewOptions:@{UIPageViewControllerOptionSpineLocationKey:@(UIPageViewControllerSpineLocationMin),UIPageViewControllerOptionInterPageSpacingKey:@(_spacing)}];
+                // https://medium.com/@artempoluektov/ios-pdfkit-ink-annotations-tutorial-4ba19b474dce
+                _pdfView.backgroundColor = [UIColor clearColor];
             } else {
                 [_pdfView usePageViewController:NO withViewOptions:Nil];
             }
